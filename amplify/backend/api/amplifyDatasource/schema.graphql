@@ -1,0 +1,61 @@
+type VampireName @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  vampireID: ID! @index(name: "byVampire")
+}
+
+enum Disposition {
+  FRIEND
+  NEUTRAL
+  FOE
+}
+
+type Characters @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  description: String
+  dead: Boolean!
+  gone: Boolean!
+  birthYear: Int
+  deathYear: Int
+  relation: String!
+  disposition: Disposition
+  vampireID: ID! @index(name: "byVampire")
+}
+
+type Skill @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  summary: String!
+  description: String
+  checked: Boolean!
+  lost: Boolean!
+  vampireID: ID! @index(name: "byVampire")
+}
+
+type Resource @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  summary: String
+  description: String
+  vampireID: ID! @index(name: "byVampire")
+  lost: Boolean
+}
+
+type Mark @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  summary: String
+  description: String
+  vampireID: ID! @index(name: "byVampire")
+}
+
+type Vampire @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Names: [VampireName] @hasMany(indexName: "byVampire", fields: ["id"])
+  Resources: [Resource] @hasMany(indexName: "byVampire", fields: ["id"])
+  Skills: [Skill] @hasMany(indexName: "byVampire", fields: ["id"])
+  Marks: [Mark] @hasMany(indexName: "byVampire", fields: ["id"])
+  Characters: [Characters] @hasMany(indexName: "byVampire", fields: ["id"])
+  createdDate: AWSDateTime!
+  lastUpdated: AWSDateTime!
+  uniqueCode: String!
+  birthYear: Int
+}
