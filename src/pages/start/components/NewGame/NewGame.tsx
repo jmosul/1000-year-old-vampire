@@ -1,16 +1,23 @@
 import React, {ChangeEvent, ChangeEventHandler, FormEvent, useState} from 'react';
 import {Button, Card, Grid, TextField, View} from '@aws-amplify/ui-react';
 import {useNavigate} from 'react-router-dom';
+import createGame from '../../../../services/createGame';
 
 const NewGame = (): JSX.Element => {
     const [textError, setTextError] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [vampireName, setVampireName] = useState<string|undefined>();
     const navigate = useNavigate();
 
-    const handleSubmit = (event: FormEvent): void => {
-        navigate(`/new?vampire=${vampireName}`);
-
+    const handleSubmit = async (event: FormEvent): Promise<void> => {
         event.preventDefault();
+        setLoading(true);
+
+        if (vampireName) {
+            const vampire = await createGame(vampireName);
+
+            navigate(`game/${vampire.id}`);
+        }
     };
 
     const handleChange: ChangeEventHandler = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -46,6 +53,8 @@ const NewGame = (): JSX.Element => {
                             isFullWidth={true}
                             size="large"
                             variation="primary"
+                            isLoading={loading}
+                            loadingText="Befalling"
                         >
                             Begin
                         </Button>
@@ -57,4 +66,3 @@ const NewGame = (): JSX.Element => {
 };
 
 export default NewGame;
-
